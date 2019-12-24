@@ -1,0 +1,49 @@
+1. 未上传文件：
+  （cart、enter、html、manager、search、seckill、shop、user）这几个web模块的 css、img、js/plugins、plugins文件夹
+
+2. Port记录：
+  goodsService：9001---dubbo:20881
+  adService:9002---dubbo:20882
+  searchService:9004---dubbo:20884
+  htmlService:9005---
+  userService:9006---dubbo:20886
+  cartService:9007---dubbo:20887
+  orderService:9008---dubbo:20888
+  seckillService:9009---dubbo:20889
+
+  managerWeb：9101
+  shopWeb：9102
+  enterWeb:9103
+  searchWeb:9104
+  htmlWeb:9105
+  userWeb:9106
+  cartWeb:9107
+  seckillWeb:9109
+  
+3. 完成部分：
+  运营商：品牌管理、规格管理、模版管理、分类管理、商品审核、商家审核、广告管理、广告分类管理
+  商家：商品管理、注册
+  用户：首页、搜索、购物车、秒杀
+  
+4. 需要启动
+  本地：(CAS)
+    ** /Users/rainbow/Library/tomcat8/bin/startup.sh 
+  虚拟机：212.21:
+    Fdfsdfs:(开机启动)
+      ** 启动 /usr/bin/fdfs_trackerd /etc/fdfs/tracker.conf restart
+      **     /usr/bin/fdfs_storaged /etc/fdfs/storage.conf restart
+         上传 /usr/bin/fdfs_test /etc/fdfs/client.conf upload /root/2.jpg
+    nginx：
+      ** 启动：/etc/init.d/nginx start
+         测试：http://172.16.212.21/group1/M00/00/00/rBDUFV3l-p-AGdd9AAkiJ5XeZJQ648.jpg
+    Redis：
+      ** Redis:service redisd start / stop
+    Tomcat:
+      ** sh /root/tomcat/bin/startup.sh
+         sh /root/tomcat/bin/shutdown.sh
+    Solr修改域文件---重启tomcat
+        /root/solrhome/collection1/conf/schema.xml
+    ActiveMQ启动：(开机启动)
+      ** cd /root/apache-activemq-5.12.0/bin     ./activemq start
+  三台虚拟机：
+    Zookeeper：zkService.sh start
