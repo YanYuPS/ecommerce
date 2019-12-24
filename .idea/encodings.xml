@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding" defaultCharsetForPropertiesFiles="UTF-8" addBOMForNewFiles="with NO BOM">
+    <file url="file://$PROJECT_DIR$/ecommerce_ad_service" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ecommerce_cart_service" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ecommerce_cart_web" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ecommerce_enter_web" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ecommerce_goods_service" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ecommerce_html_service" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ecommerce_html_web" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ecommerce_manager_web" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ecommerce_order_service" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ecommerce_order_web" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ecommerce_search_service" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ecommerce_search_web" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ecommerce_seckill_service" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ecommerce_seckill_web" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ecommerce_shop_web" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ecommerce_user_service" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ecommerce_user_web" charset="UTF-8" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

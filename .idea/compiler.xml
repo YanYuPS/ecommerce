@@ -6,8 +6,43 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="ecommerce" />
+        <module name="ecommerce_ad_interface" />
+        <module name="ecommerce_ad_service" />
+        <module name="ecommerce_cart_interface" />
+        <module name="ecommerce_cart_service" />
+        <module name="ecommerce_cart_web" />
+        <module name="ecommerce_common" />
+        <module name="ecommerce_dao" />
+        <module name="ecommerce_enter_web" />
+        <module name="ecommerce_goods_interface" />
+        <module name="ecommerce_goods_service" />
+        <module name="ecommerce_html_interface" />
+        <module name="ecommerce_html_service" />
+        <module name="ecommerce_html_web" />
+        <module name="ecommerce_manager_web" />
+        <module name="ecommerce_order_interface" />
+        <module name="ecommerce_order_service" />
+        <module name="ecommerce_pojo" />
+        <module name="ecommerce_search_interface" />
+        <module name="ecommerce_search_service" />
+        <module name="ecommerce_search_web" />
+        <module name="ecommerce_seckill_interface" />
+        <module name="ecommerce_seckill_service" />
+        <module name="ecommerce_seckill_web" />
+        <module name="ecommerce_shop_web" />
+        <module name="ecommerce_solr_util" />
+        <module name="ecommerce_user_interface" />
+        <module name="ecommerce_user_service" />
+        <module name="ecommerce_user_web" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="ecommerce_order_web" target="1.8" />
+      <module name="ecommercecommon" target="1.7" />
+      <module name="ecommercedao" target="1.7" />
+      <module name="ecommercepojo" target="1.7" />
+      <module name="ecommercesellergoodsinterface" target="1.7" />
+      <module name="ecommercesellergoodsservice" target="1.7" />
+    </bytecodeTargetLevel>
   </component>
 </project>
