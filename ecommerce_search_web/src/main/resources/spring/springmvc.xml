@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <context:property-placeholder location="classpath:properties/*.properties"/>
+
+    <!--注解驱动- - -回写数据可以是对象/集合-->
+    <mvc:annotation-driven>
+        <mvc:message-converters register-defaults="true">
+            <bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+                <property name="supportedMediaTypes" value="application/json"/>
+                <property name="features">
+                    <array>
+                        <value>WriteMapNullValue</value>
+                        <value>WriteDateUseDateFormat</value>
+                    </array>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <!--
+        registry: 注册中心
+        protocol: 注册中心地址协议（dubbo,zookeeper,multicast等）
+        service: 服务提供者 暴露服务
+        reference: 服务消费者 引用服务
+        application：应用信息
+
+    -->
+    <!--服务调用方：运营商管理-->
+    <dubbo:application name="ecommerce-search-web" />
+    <!--服务注册中心-->
+    <!--<dubbo:registry address="zookeeper://172.16.212.21:2181"/>-->
+    <dubbo:registry protocol="zookeeper" address="172.16.212.21:2181,172.16.212.22:2181,172.16.212.23:2181"/>
+    <!--包扫描-->
+    <dubbo:annotation package="search.controller" />
+    <!--超时时间-->
+    <dubbo:consumer timeout="20000"/>
+
+
+    <!--配置内部资源视图解析器 - - 前后缀-->
+    <bean id="internalResourceViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/admin/"></property>  <!-- 前缀,jsp文件所在目录 -->
+        <property name="suffix" value=".jsp"></property>  <!-- 后缀 -->
+    </bean>
+    <!--支持AOP注解，proxy-target-class="true" 默认使用cglib方式-->
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
+
+
+    <!-- 配置多媒体解析器 -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="defaultEncoding" value="UTF-8"></property>
+        <!-- 设定文件上传的最大值5MB，5*1024*1024 -->
+        <property name="maxUploadSize" value="5242880"></property>
+    </bean>
+
+</beans>

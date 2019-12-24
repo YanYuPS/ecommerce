@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <!-- 以下页面不被拦截 -->
+    <http pattern="/shopLogin.html" security="none"></http>
+    <http pattern="/admin/register.html" security="none"></http>
+    <http pattern="/seller/add.do" security="none"></http>
+
+    <http pattern="/css/**" security="none"></http>
+    <http pattern="/img/**" security="none"></http>
+    <http pattern="/js/**" security="none"></http>
+    <http pattern="/plugins/**" security="none"></http>
+
+
+    <!-- 页面拦截规则 -->
+    <!--
+        use-expressions 为是否使用使用 Spring 表达式语言（ SpEL ），默认为true ,
+        如果开启，则拦截的配置应该写成以下形式：
+        <intercept-url pattern="/**" access="hasRole('ROLE_USER')" />
+    -->
+    <http use-expressions="false">
+        <!--
+            intercept-url定义一个过滤规则
+            pattern 表示对哪些url进行权限控制
+                /*  表示的是该目录下的资源，只包括本级目录不包括下级目录
+                /** 表示的是该目录以及该目录下所有级别子目录的资源
+            access 表示在请求对应的URL时需要什么权限
+        -->
+        <intercept-url pattern="/**" access="ROLE_SELLER"/>
+        <!--
+            开启表单登录
+            login-page：登录页面
+            login-processing-url：登录url
+            default-target-url：登录成功 跳转页面
+            authentication-failure-url：登录失败 跳转页面
+            always-use-default-target：指定了是否在身份验证通过后总是跳转到default-target-url属性指定的URL
+
+            如果使用了框架页，需要设置框架页的策略为SAMEORIGIN
+        -->
+        <form-login login-page="/shopLogin.html"
+                    login-processing-url="/login.do"
+                    default-target-url="/admin/index.html"
+                    authentication-failure-url="/shopLogin.html"
+                    always-use-default-target="true"/>
+        <!--关闭 跨站请求伪造-->
+        <csrf disabled="true"/>
+        <!--如果使用了框架页，需要设置框架页的策略为SAMEORIGIN-->
+        <headers>
+            <frame-options policy="SAMEORIGIN"/>
+        </headers>
+        <!--退出登录-->
+        <!--<logout/>-->
+        <logout logout-url="/logout" logout-success-url="/shopLogin.html" />
+    </http>
+
+
+    <!-- 认证管理器 -->
+    <authentication-manager>
+        <authentication-provider user-service-ref="userDetailService">
+            <password-encoder ref="bCryptEncoder"></password-encoder>
+        </authentication-provider>
+    </authentication-manager>
+
+
+    <!-- 引用dubbo 服务 -->
+    <dubbo:application name="ecommerce-shop-web" />
+    <dubbo:registry protocol="zookeeper" address="172.16.212.21:2181,172.16.212.22:2181,172.16.212.23:2181"/>
+    <dubbo:reference id="sellerService"  interface="goods.service.SellerService" ></dubbo:reference>
+    <beans:bean id="userDetailService" class="shop.service.UserDetailsServiceImpl">
+        <beans:property name="sellerService" ref="sellerService"></beans:property>
+    </beans:bean>
+
+    <!--BCrypt加密-->
+    <beans:bean id="bCryptEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"></beans:bean>
+
+</beans:beans>
