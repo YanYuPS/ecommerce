@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- 页面meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>运营商后台管理系统</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+
+
+    <link rel="stylesheet" href="../plugins/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../plugins/adminLTE/css/AdminLTE.css">
+    <link rel="stylesheet" href="../plugins/adminLTE/css/skins/_all-skins.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <!--<script src="../plugins/jQueryUI/jquery-ui.min.js"></script>-->
+    <script src="../plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../plugins/adminLTE/js/app.min.js"></script>
+
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="../plugins/bower_components/font-awesome/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="../plugins/bower_components/Ionicons/css/ionicons.min.css">
+    <!-- jvectormap -->
+    <link rel="stylesheet" href="../plugins/bower_components/jvectormap/jquery-jvectormap.css">
+
+
+    <!--引入js-->
+    <script type="text/javascript" src="../plugins/angularjs/angular.min.js"></script>
+
+    <!--相关angularjs-->
+    <script type="text/javascript" src="../js/base.js"></script>
+    <script type="text/javascript" src="../js/controller/baseController.js"></script>
+    <script type="text/javascript" src="../js/service/loginService.js"></script>
+    <script type="text/javascript" src="../js/controller/loginController.js"></script>
+
+    <script type="text/javascript" src="../js/service/sellerService.js"></script>
+    <script type="text/javascript" src="../js/service/goodsService.js"></script>
+
+
+    <script type="text/javascript">
+        function SetIFrameHeight() {
+            var iframeid = document.getElementById("iframe"); //iframe id
+            if (document.getElementById) {
+                iframeid.height = document.documentElement.clientHeight;
+            }
+        }
+    </script>
+
+</head>
+
+<body class="hold-transition skin-blue sidebar-mini"
+      ng-app="ecommerce" ng-controller="loginController" ng-init="showLoginName();search_shop();search_goods();">
+
+<div class="wrapper">
+
+    <!-- 页面头部 -->
+    <header class="main-header">
+        <!-- Logo -->
+        <a href="index.html" class="logo">
+            <!-- mini logo for sidebar mini 50x50 pixels -->
+            <span class="logo-mini"><b>运营商</b></span>
+            <!-- logo for regular state and mobile devices -->
+            <span class="logo-lg"><b>运营商</b>管理后台</span>
+        </a>
+
+        <!-- Header Navbar: style can be found in header.less -->
+        <nav class="navbar navbar-static-top">
+            <!-- Sidebar toggle button-->
+            <!--data-toggle：数据切换-->
+            <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+                <span class="sr-only">Toggle navigation</span>
+            </a>
+
+            <div class="navbar-custom-menu">
+                <ul class="nav navbar-nav">
+
+                    <!--待审核商家-->
+                    <li class="dropdown messages-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-fw fa-child"></i>
+                            <span class="label label-success">{{totalItems_shop}}</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="header">有{{totalItems_shop}}个待审核商家</li>
+                            <li>
+                                <ul class="menu">
+                                    <li ng-repeat="shop in list_shop">
+                                        <a href="javascript:;">
+                                            <div class="pull-left">
+                                                <img src="{{shop.logoPic}}" class="img-circle" alt="暂无图片">
+                                            </div>
+                                            <h4>公司名称：{{shop.name}}</h4>
+                                            <p>店铺名称：{{shop.nickName}}</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="footer"><a href="seller_review.html" target="iframe">查看所有待审核商家</a></li>
+                        </ul>
+                    </li>
+
+                    <!--待审核商品-->
+                    <li class="dropdown messages-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-fw fa-apple"></i>
+                            <span class="label label-warning">{{totalItems_goods}}</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="header">有{{totalItems_goods}}个待审核商品</li>
+                            <li>
+                                <ul class="menu">
+                                    <li ng-repeat="goods in list_goods">
+                                        <a href="javascript:;">
+                                            <div class="pull-left">
+                                                <img src="{{goods.smallPic}}" class="img-circle" alt="暂无图片">
+                                            </div>
+                                            <h4>商品名称：{{goods.goodsName}}</h4>
+                                            <p>商品价格：{{goods.price}}</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="footer"><a href="goods.html" target="iframe">查看所有待审核商品</a></li>
+                        </ul>
+                    </li>
+
+                    <!--管理员-->
+                    <li class="dropdown user user-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <img src="../img/avatar3.png" class="user-image" alt="User Image">
+                            <span class="hidden-xs">{{loginName}}</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <!-- User image -->
+                            <li class="user-header">
+                                <img src="../img/avatar3.png" class="img-circle" alt="User Image">
+                                <p>
+                                    {{loginName}}
+                                    <small>最后登录 {{dateTime}}</small>
+                                </p>
+                            </li>
+
+                            <!-- Menu Footer-->
+                            <li class="user-footer">
+                                <div class="pull-left">
+                                    <a href="javascript:;" class="btn btn-default btn-flat">修改密码</a>
+                                </div>
+                                <div class="pull-right">
+                                    <a href="../logout" class="btn btn-default btn-flat">退出登录</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <!-- 页面头部 /-->
+
+    <!-- 导航侧栏 -->
+    <aside class="main-sidebar">
+        <!-- sidebar: style can be found in sidebar.less -->
+        <section class="sidebar">
+            <!-- Sidebar user panel -->
+            <div class="user-panel">
+                <div class="pull-left image">
+                    <img src="../img/avatar3.png" class="img-circle" alt="User Image">
+                </div>
+                <div class="pull-left info">
+                    <p> {{loginName}} </p>
+                    <!--<a href="#"><i class="fa fa-circle text-success"></i> 在线 </a>-->
+                </div>
+            </div>
+
+            <!-- sidebar menu: : style can be found in sidebar.less -->
+            <ul class="sidebar-menu">
+                <li class="header">菜单</li>
+                <li id="admin-index"><a href="index.html"><i class="fa fa-dashboard"></i> <span>首页</span></a></li>
+
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-fw fa-child"></i>
+                        <span>商家管理</span>
+                        <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li id="AAA1">
+                            <a href="seller.html" target="iframe"><i class="fa fa-circle-o"></i>商家管理</a>
+                        </li>
+                        <li id="AAA2">
+                            <a href="seller_review.html" target="iframe"><i class="fa fa-circle-o"></i>商家审核</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-fw fa-apple"></i>
+                        <span>商品管理</span>
+                        <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li id="AAA3">
+                            <a href="brand.html" target="iframe"><i class="fa fa-circle-o"></i>品牌管理</a>
+                        </li>
+                        <li id="AAA4">
+                            <a href="specification.html" target="iframe"><i class="fa fa-circle-o"></i>规格管理</a>
+                        </li>
+                        <li id="AAA5">
+                            <a href="type_template.html" target="iframe"><i class="fa fa-circle-o"></i>模板管理</a>
+                        </li>
+                        <li id="AAA6">
+                            <a href="item_cat.html" target="iframe"><i class="fa fa-circle-o"></i>分类管理</a>
+                        </li>
+                        <li id="AAA7">
+                            <a href="goods.html" target="iframe"><i class="fa fa-circle-o"></i>商品审核</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-fw fa-rss-square"></i>
+                        <span>广告管理</span>
+                        <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li id="AAA8">
+                            <a href="adCategory.html" target="iframe"><i class="fa fa-circle-o"></i>广告类型管理</a>
+                        </li>
+                        <li id="AAA9">
+                            <a href="ad.html" target="iframe"><i class="fa fa-circle-o"></i>广告管理</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </section>
+    </aside>
+    <!-- 导航侧栏 /-->
+
+    <!-- 内容区域 -->
+    <div class="content-wrapper">
+        <iframe width="100%" id="iframe" name="iframe" onload="SetIFrameHeight()" frameborder="0" src="home.html"></iframe>
+    </div>
+    <!-- 内容区域 /-->
+
+    <!-- 底部导航 -->
+    <footer class="main-footer">
+        <div class="pull-right hidden-xs">
+            <b></b>
+        </div>
+        <strong></strong>
+    </footer>
+    <!-- 底部导航 /-->
+
+</div>
+
+</body>
+
+</html>

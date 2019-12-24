@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
+    <title>秒杀</title>
+
+
+    <link rel="stylesheet" type="text/css" href="css/webbase.css"/>
+    <link rel="stylesheet" type="text/css" href="css/widget-jquery.autocomplete.css"/>
+    <link rel="stylesheet" type="text/css" href="css/pages-seckill-index.css"/>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="plugins/bower_components/font-awesome/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="plugins/bower_components/Ionicons/css/ionicons.min.css">
+    <!-- jvectormap -->
+    <link rel="stylesheet" href="plugins/bower_components/jvectormap/jquery-jvectormap.css">
+
+
+    <!--引入js-->
+    <script type="text/javascript" src="plugins/angularjs/angular.min.js"></script>
+
+    <!--相关angularjs-->
+    <script type="text/javascript" src="js/base.js"></script>
+    <!--<script type="text/javascript" src="js/controllers/baseController.js"></script>-->
+    <script type="text/javascript" src="js/service/seckillGoodsService.js"></script>
+    <script type="text/javascript" src="js/controller/seckillGoodsController.js"></script>
+    <script type="text/javascript" src="js/service/userService.js"></script>
+
+    <script type="text/javascript">
+        //设置高度
+        function SetIFrameHeightFoot() {
+            var iframeid = document.getElementById("iframeFoot"); //iframe id
+            if (document.getElementById) {
+                // iframeid.height = document.documentElement.clientHeight;
+                iframeid.height = 370;
+            }
+        }
+    </script>
+</head>
+
+<body ng-app="ecommerce" ng-controller="seckillGoodsController" ng-init="getName();findList()">
+
+
+
+<!--页面顶部-->
+<div id="nav-bottom">
+    <div class="nav-top">
+        <!--顶部菜单栏-->
+        <div class="top">
+            <div class="py-container">
+                <div class="shortcut">
+                    <ul class="fr">
+                        <li class="f-item" ng-if="!loginFlag">
+                            <a href="jump.html" >你好，请登录</a>　
+                            <span><a href="http://localhost:9106/ecommerce_user_web/admin/register.html" target="_blank">免费注册</a></span>
+                        </li>
+                        <li class="f-item" ng-if="loginFlag">
+                            <span style="color: #000;">你好，{{username}}</span>
+                            <span class="space"></span>
+                            <span><a href="logout/cas">退出登录 </a></span>
+                        </li>
+                        <li class="f-item space"></li>
+
+                        <li class="f-item">
+                            <a href="http://localhost:9106/ecommerce_user_web/" >我的订单</a>
+                        </li>
+                        <li class="f-item space"></li>
+
+                        <li class="f-item">我的Y</li>
+                        <li class="f-item space"></li>
+
+                        <li class="f-item">Y会员</li>
+                        <li class="f-item space"></li>
+
+                        <li class="f-item">企业采购</li>
+                        <li class="f-item space"></li>
+
+                        <li class="f-item">客户服务</li>
+                        <li class="f-item space"></li>
+
+                        <li class="f-item">网站导航</li>
+                        <li class="f-item space"></li>
+
+                        <li class="f-item">手机Y</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!--头部-->
+        <div class="header">
+            <div class="py-container">
+                <!--图标、搜索、购物车-->
+                <div class="yui3-g Logo">
+                    <!--图标-->
+                    <div class="yui3-u Left ">
+                        <a class="logo-bd" title="Y" href="http://localhost:9103/ecommerce_enter_web/" ></a>
+                    </div>
+                    <div class="yui3-u Center searchArea">
+                        <!--搜索-->
+                        <div class="search">
+                            <form action="" class="sui-form form-inline">
+                                <!--searchAutoComplete-->
+                                <div class="input-append">
+                                    <input type="text" id="autocomplete" type="text" class="input-error input-xxlarge"
+                                           ng-model="keywords"/>
+                                    <button class="sui-btn btn-xlarge btn-danger" ng-click="search()" type="button">搜索
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <!--搜索框下的链接-->
+                        <div class="hotwords">
+                            <ul>
+                                <li class="f-item">美妆好礼</li>
+                                <li class="f-item">199减20</li>
+                                <li class="f-item">圣诞好礼</li>
+                                <li class="f-item">Y国际</li>
+                                <li class="f-item">每100-50</li>
+                                <li class="f-item">ROG手机</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!--购物车-->
+                    <div class="yui3-u Right shopArea">
+                        <div class="fr shopcar">
+                            <div class="show-shopcar" id="shopcar">
+                                <span class="car"></span>
+                                <a class="sui-btn btn-default btn-xlarge" href="http://localhost:9107/ecommerce_cart_web/" target="_blank">
+                                    <span>我的购物车</span>
+                                    <i class="shopnum">{{totalValue.totalNum}}</i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--网页导航--秒杀、。。-->
+                <div class="yui3-g NavList">
+                    <div class="yui3-u Left all-sort" style="background-color: #c82e29;">
+                        <!--http://localhost:9109/ecommerce_seckill_web/-->
+                        <a href="javascript:;" style="text-decoration:none;color: #fff;">
+                        <h4 style="font-size: 20px;">秒杀</h4>
+                        </a>
+                    </div>
+                    <div class="yui3-u Left all-sort">
+                        <a href="javascript:;" style="text-decoration:none;color: #000;">
+                        <h4 style="font-size: 20px;">每日特价</h4>
+                        </a>
+                    </div>
+                    <div class="yui3-u Left all-sort">
+                        <a href="javascript:;" style="text-decoration:none;color: #000;">
+                        <h4 style="font-size: 20px;">大牌闪购</h4>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript" src="js/plugins/jquery/jquery.min.js"></script>
+<script type="text/javascript">
+    $(function(){
+        $("#service").hover(function(){
+            $(".service").show();
+        },function(){
+            $(".service").hide();
+        });
+        $("#shopcar").hover(function(){
+            $("#shopcarlist").show();
+        },function(){
+            $("#shopcarlist").hide();
+        });
+
+    })
+</script>
+<script type="text/javascript" src="js/plugins/sui/sui.min.js"></script>
+<script type="text/javascript" src="js/widget/jquery.autocomplete.js"></script>
+<script type="text/javascript" src="js/widget/nav.js"></script>
+<script type="text/javascript" src="js/pages/seckill-index.js"></script>
+<script>
+    $(function(){
+        $("#code").hover(function(){
+            $(".erweima").show();
+        },function(){
+            $(".erweima").hide();
+        });
+    })
+</script>
+</body>
+
+
+<div class="py-container index">
+    <!--banner-->
+    <div class="banner">
+        <img src="img/_/banner.png" class="img-responsive" >
+        <!--<div style="height:100px;line-height: 100px;background: -webkit-linear-gradient(top,white,lightblue,skyblue,lightblue,white)">-->
+            <!--<span style="float: left;width: 30%;font-size: 50px;text-align: right;color: #CCC;">sa</span>-->
+            <!--<span style="float: left;width: 40%;font-size: 50px;text-align: center;">限时秒杀</span>-->
+            <!--<span style="float: right;width: 30%;font-size: 50px;text-align: left;color: #CCC;">le</span>-->
+        <!--</div>-->
+    </div>
+
+    <!--商品列表-->
+    <div class="goods-list">
+        <ul class="seckill" id="seckill">
+
+            <li class="seckill-item" ng-repeat="pojo in list">
+                <div class="pic"> <!--onclick="location.href='admin/seckill-item.html'"-->
+                    <a href="http://localhost:9105/ecommerce_html_web/admin/{{pojo.goodsId}}.html" target="_blank" >
+                    <img src="{{pojo.smallPic}}" width="290px" height="290px" alt='{{pojo.title}}'>
+                    </a>
+                </div>
+                <div class="intro">
+                    <span>{{pojo.title}}</span>
+                </div>
+                <div class='price'>
+                    <b class='sec-price'>￥{{pojo.costPrice}}</b><b class='ever-price'>￥{{pojo.price}}</b>
+                </div>
+                <div class='num'>
+                    <div>已售{{ ((pojo.num-pojo.stockCount)/pojo.num*100).toFixed(0) }}%</div>
+                    <div class='progress'>
+                        <div class='sui-progress progress-danger'>
+                            <span style='width: {{  ((pojo.num-pojo.stockCount)/pojo.num*100).toFixed(0) }}%;' class='bar'></span>
+                        </div>
+                    </div>
+                    <div>剩余<b class='owned'>{{pojo.stockCount}}</b>件</div>
+                </div>
+                <a class='sui-btn btn-block btn-buy' href='seckill-item.html#?id={{pojo.id}}'>立即抢购</a>
+            </li>
+
+        </ul>
+    </div>
+
+    <!--侧边栏-->
+    <div class="cd-top">
+        <div class="top">
+            <img src="img/_/gotop.png"/>
+            <b>顶部</b>
+        </div>
+        <div class="code" id="code">
+            <span><img src="img/_/code.png"/></span>
+        </div>
+        <div class="erweima">
+            <img src="img/_/erweima.png" alt="">
+            <s></s>
+        </div>
+    </div>
+</div>
+
+<!--回到顶部-->
+
+
+
+
+<!--页面底部-->
+<div>
+    <iframe width="100%" id="iframeFoot" name="iframe" onload="SetIFrameHeightFoot()" frameborder="0" src="admin/foot.html"></iframe>
+</div>
+
+
+
+
+
+</html>

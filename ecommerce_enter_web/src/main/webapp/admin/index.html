@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
+    <title>电商</title>
+
+    <link rel="stylesheet" type="text/css" href="css/webbase.css"/>
+    <link rel="stylesheet" type="text/css" href="css/pages-JD-index.css"/>
+    <link rel="stylesheet" type="text/css" href="css/widget-jquery.autocomplete.css"/>
+    <link rel="stylesheet" type="text/css" href="css/widget-cartPanelView.css"/>
+
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="plugins/bower_components/font-awesome/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="plugins/bower_components/Ionicons/css/ionicons.min.css">
+    <!-- jvectormap -->
+    <link rel="stylesheet" href="plugins/bower_components/jvectormap/jquery-jvectormap.css">
+
+
+
+    <!--引入js-->
+    <script type="text/javascript" src="plugins/angularjs/angular.min.js"></script>
+
+    <!--相关angularjs-->
+    <script type="text/javascript" src="js/base.js"></script>
+    <!--<script type="text/javascript" src="js/controllers/baseController.js"></script>-->
+    <script type="text/javascript" src="js/service/adService.js"></script>
+    <script type="text/javascript" src="js/controller/adController.js"></script>
+
+    <script type="text/javascript">
+        //设置高度
+        function SetIFrameHeightFoot() {
+            var iframeid = document.getElementById("iframeFoot"); //iframe id
+            if (document.getElementById) {
+                // iframeid.height = document.documentElement.clientHeight;
+                iframeid.height = 370;
+            }
+        }
+    </script>
+
+</head>
+
+<body ng-app="ecommerce" ng-controller="adController"
+      ng-init="getName();findCartList();findByCategoryId(1);findByCategoryId(2);findByCategoryId(3)">
+
+<!--页面顶部-->
+<div id="nav-bottom">
+    <div class="nav-top">
+        <!--顶部菜单栏-->
+        <div class="top">
+            <div class="py-container">
+                <div class="shortcut">
+                    <ul class="fr">
+                        <li class="f-item" ng-if="!loginFlag">
+                            <a href="jump.html" >你好，请登录</a>　
+                            <span><a href="http://localhost:9106/ecommerce_user_web/admin/register.html" target="_blank">免费注册</a></span>
+                        </li>
+                        <li class="f-item" ng-if="loginFlag">
+                            <span style="color: #000;">你好，{{username}}</span>
+                            <span class="space"></span>
+                            <span><a href="logout/cas">退出登录 </a></span>
+                        </li>
+                        <li class="f-item space"></li>
+
+                        <li class="f-item">
+                            <a href="http://localhost:9106/ecommerce_user_web/" >我的订单</a>
+                        </li>
+                        <li class="f-item space"></li>
+
+                        <li class="f-item">我的Y</li>
+                        <li class="f-item space"></li>
+
+                        <li class="f-item">Y会员</li>
+                        <li class="f-item space"></li>
+
+                        <li class="f-item">企业采购</li>
+                        <li class="f-item space"></li>
+
+                        <li class="f-item">客户服务</li>
+                        <li class="f-item space"></li>
+
+                        <li class="f-item">网站导航</li>
+                        <li class="f-item space"></li>
+
+                        <li class="f-item">手机Y</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!--头部-->
+        <div class="header">
+            <div class="py-container">
+                <!--图标、搜索、购物车-->
+                <div class="yui3-g Logo">
+                    <!--图标-->
+                    <div class="yui3-u Left ">
+                        <a class="logo-bd" title="Y" href="http://localhost:9103/ecommerce_enter_web/" ></a>
+                    </div>
+                    <div class="yui3-u Center searchArea">
+                        <!--搜索-->
+                        <div class="search">
+                            <form action="" class="sui-form form-inline">
+                                <!--searchAutoComplete-->
+                                <div class="input-append">
+                                    <input type="text" id="autocomplete" type="text" class="input-error input-xxlarge"
+                                           ng-model="keywords"/>
+                                    <button class="sui-btn btn-xlarge btn-danger" ng-click="search()" type="button">搜索
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <!--搜索框下的链接-->
+                        <div class="hotwords">
+                            <ul>
+                                <li class="f-item">美妆好礼</li>
+                                <li class="f-item">199减20</li>
+                                <li class="f-item">圣诞好礼</li>
+                                <li class="f-item">Y国际</li>
+                                <li class="f-item">每100-50</li>
+                                <li class="f-item">ROG手机</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!--购物车-->
+                    <div class="yui3-u Right shopArea">
+                        <div class="fr shopcar">
+                            <div class="show-shopcar" id="shopcar">
+                                <span class="car"></span>
+                                <a class="sui-btn btn-default btn-xlarge" href="http://localhost:9107/ecommerce_cart_web/" target="_blank">
+                                    <span>我的购物车</span>
+                                    <i class="shopnum">{{totalValue.totalNum}}</i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--网页导航: 秒杀、。。-->
+                <div class="yui3-g NavList">
+                    <div class="yui3-u Left"></div>
+                    <div class="yui3-u Center navArea">
+                        <ul class="nav">
+                            <li class="f-item"><a href="http://localhost:9109/ecommerce_seckill_web/" target="_blank">秒杀</a></li>
+                            <li class="f-item">优惠券</li>
+                            <li class="f-item">会员</li>
+                            <li class="f-item">品牌闪购</li>
+                            <li class="f-item">拍卖</li>
+                            <li class="f-item">时尚</li>
+                            <li class="f-item">超市</li>
+                            <li class="f-item">生鲜</li>
+                            <!--<li class="f-item">国际</li>-->
+                            <!--<li class="f-item">金融</li>-->
+                        </ul>
+                    </div>
+                    <div class="yui3-u Right"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="allPage">
+
+<!--菜单列表-->
+<div class="sort">
+    <div class="py-container">
+        <div class="yui3-g SortList ">
+
+            <div class="yui3-u Left all-sort-list">
+                <div class="all-sort-list2">
+
+                    <div class="item bo">
+                        <h3><a href="">家用电器</a></h3>
+                        <div class="item-list clearfix">
+                            <div class="subitem">
+                                <dl class="fore1">
+                                    <dt><a href="http://localhost:9104/ecommerce_search_web/#?keywords=电视" target="_blank">电视</a></dt>
+                                    <dd>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=超薄电视" target="_blank">超薄电视</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=全面屏电视" target="_blank">全面屏电视</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=智能电视" target="_blank">智能电视</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=OLED电视" target="_blank">OLED电视</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=智慧屏" target="_blank">智慧屏</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=4K超清电视" target="_blank">4K超清电视</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=55英寸" target="_blank">55英寸</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=65英寸" target="_blank">65英寸</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=电视配件" target="_blank">电视配件</a></em>
+                                    </dd>
+                                </dl>
+                                <dl class="fore2">
+                                    <dt><a href="http://localhost:9104/ecommerce_search_web/#?keywords=空调" target="_blank">空调</a></dt>
+                                    <dd>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=空调挂机" target="_blank">空调挂机</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=空调柜机" target="_blank">空调柜机</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=中央空调" target="_blank">中央空调</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=变频空调" target="_blank">变频空调</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=一级能效" target="_blank">一级能效</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=移动空调" target="_blank">移动空调</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=以旧换新" target="_blank">以旧换新</a></em>
+                                    </dd>
+                                </dl>
+                                <dl class="fore3">
+                                    <dt><a href="http://localhost:9104/ecommerce_search_web/#?keywords=洗衣机" target="_blank">洗衣机</a></dt>
+                                    <dd>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=滚筒洗衣机" target="_blank">滚筒洗衣机</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=洗烘一体机" target="_blank">洗烘一体机</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=波轮洗衣机" target="_blank">波轮洗衣机</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=迷你洗衣机" target="_blank">迷你洗衣机</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=烘干机" target="_blank">烘干机</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=洗衣机配件" target="_blank">洗衣机配件</a></em>
+                                    </dd>
+                                </dl>
+                                <dl class="fore4">
+                                    <dt><a href="http://localhost:9104/ecommerce_search_web/#?keywords=冰箱" target="_blank">冰箱</a></dt>
+                                    <dd>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=多门" target="_blank">多门</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=对开门" target="_blank">对开门</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=三门" target="_blank">三门</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=双门" target="_blank">双门</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=冷柜/冰吧" target="_blank">冷柜/冰吧</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=酒柜" target="_blank">酒柜</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=冰箱配件" target="_blank">冰箱配件</a></em>
+                                    </dd>
+                                </dl>
+                                <!--<dl class="fore5">
+                                    <dt><a href="">厨卫大电</a></dt>
+                                    <dd><em><a href="">油烟机</a></em><em><a href="">燃气灶</a></em><em><a href="">烟灶套装</a></em><em><a href="">集成灶</a></em><em><a href="">消毒柜</a></em><em><a href="">洗碗机</a></em><em><a href="">电热水器</a></em><em><a href="">燃气热水器</a></em><em><a href="">空气能热水器</a></em><em><a href="">太阳能热水器</a></em><em><a href="">嵌入式厨电</a></em><em><a href="">烟机灶具配件</a></em></dd>
+                                </dl>
+                                <dl class="fore6">
+                                    <dt><a href="">厨房小电</a></dt>
+                                    <dd><em><a href="">破壁机</a></em><em><a href="">电烤箱</a></em><em><a href="">电饭煲</a></em><em><a href="">电压力锅</a></em><em><a href="">电炖锅</a></em><em><a href="">豆浆机</a></em><em><a href="">料理机</a></em><em><a href="">咖啡机</a></em><em><a href="">电饼铛</a></em><em><a href="">榨汁机/原汁机</a></em><em><a href="">电水壶/热水瓶</a></em><em><a href="">微波炉</a></em><em><a href="">电火锅</a></em><em><a href="">养生壶</a></em><em><a href="">电磁炉</a></em><em><a href="">面包机</a></em><em><a href="">空气炸锅</a></em><em><a href="">面条机</a></em><em><a href="">电陶炉</a></em><em><a href="">煮蛋器</a></em><em><a href="">电烧烤炉</a></em></dd>
+                                </dl>
+                                <dl class="fore7">
+                                    <dt><a href="">生活电器</a></dt>
+                                    <dd><em><a href="">取暖电器</a></em><em><a href="">加湿器</a></em><em><a href="">空气净化器</a></em><em><a href="">吸尘器</a></em><em><a href="">除螨仪</a></em><em><a href="">扫地机器人</a></em><em><a href="">除湿机</a></em><em><a href="">干衣机</a></em><em><a href="">蒸汽拖把/拖地机</a></em><em><a href="">挂烫机/熨斗</a></em><em><a href="">电话机</a></em><em><a href="">饮水机</a></em><em><a href="">净水器</a></em><em><a href="">电风扇</a></em><em><a href="">冷风扇</a></em><em><a href="">毛球修剪器</a></em><em><a href="">生活电器配件</a></em></dd>
+                                </dl>
+                                <dl class="fore8">
+                                    <dt><a href="">个护健康</a></dt>
+                                    <dd><em><a href="">剃须刀</a></em><em><a href="">电动牙刷</a></em><em><a href="">电吹风</a></em><em><a href="">美容器</a></em><em><a href="">洁面仪</a></em><em><a href="">按摩器</a></em><em><a href="">健康秤</a></em><em><a href="">卷/直发器</a></em><em><a href="">剃/脱毛器</a></em><em><a href="">理发器</a></em><em><a href="">足浴盆</a></em><em><a href="">足疗机</a></em><em><a href="">按摩椅</a></em></dd>
+                                </dl>
+                                <dl class="fore9">
+                                    <dt><a href="">视听影音</a></dt>
+                                    <dd><em><a href="">家庭影院</a></em><em><a href="">KTV音响</a></em><em><a href="">迷你音响</a></em><em><a href="">DVD</a></em><em><a href="">功放</a></em><em><a href="">回音壁</a></em><em><a href="">麦克风</a></em></dd>
+                                </dl>-->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="item">
+                        <h3><a href="">手机 / 运营商 / 数码</a></h3>
+                        <div class="item-list clearfix">
+                            <div class="subitem">
+                                <dl class="fore1">
+                                    <dt><a href="http://localhost:9104/ecommerce_search_web/#?keywords=手机通讯" target="_blank">手机通讯</a></dt>
+                                    <dd>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=手机" target="_blank">手机</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=游戏手机" target="_blank">游戏手机</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=老人机" target="_blank">老人机</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=对讲机" target="_blank">对讲机</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=以旧换新" target="_blank">以旧换新</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=手机维修" target="_blank">手机维修</a></em>
+                                    </dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="item">
+                        <h3><a href="">电脑 / 办公</a></h3>
+                        <div class="item-list clearfix">
+                            <div class="subitem">
+                                <dl class="fore1">
+                                    <dt><a href="http://localhost:9104/ecommerce_search_web/#?keywords=电脑整机" target="_blank">电脑整机</a></dt>
+                                    <dd>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=笔记本" target="_blank">笔记本</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=游戏本" target="_blank">游戏本</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=平板电脑" target="_blank">平板电脑</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=平板电脑配件" target="_blank">平板电脑配件</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=台式机" target="_blank">台式机</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=一体机" target="_blank">一体机</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=服务器/工作站" target="_blank">服务器/工作站</a></em>
+                                        <em><a href="http://localhost:9104/ecommerce_search_web/#?keywords=笔记本配件" target="_blank">笔记本配件</a></em>
+                                    </dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="item">
+                        <h3><a href="" style="color: #CCCCCC">家居 / 家具 / 家装 / 厨具</a></h3>
+                        <div class="item-list clearfix">
+                            <div class="subitem">
+                                <dl class="fore1">
+                                    <dt><a href="">厨具</a></dt>
+                                    <dd><em><a href="">水具</a></em><em><a href="">酒具</a></em><em><a href="">烹饪锅具</a></em><em><a href="">炒锅</a></em><em><a href="">碗碟套装</a></em><em><a href="">厨房配件</a></em><em><a href="">刀剪</a></em><em><a href="">菜板</a></em><em><a href="">锅具套装</a></em><em><a href="">茶具</a></em><em><a href="">咖啡具</a></em><em><a href="">保温杯</a></em><em><a href="">厨房置物架</a></em></dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="item">
+                        <h3><a href="" style="color: #CCCCCC">男装 / 女装 / 童装 / 内衣</a></h3>
+                        <div class="item-list clearfix">
+                            <div class="subitem">
+                                <dl class="fore1">
+                                    <dt><a href="">女装</a></dt>
+                                    <dd><em><a href="">当季热卖</a></em><em><a href="">新品推荐</a></em><em><a href="">商场同款</a></em><em><a href="">时尚套装</a></em><em><a href="">连衣裙</a></em><em><a href="">羽绒服</a></em><em><a href="">针织衫</a></em><em><a href="">毛呢大衣</a></em><em><a href="">休闲裤</a></em><em><a href="">卫衣</a></em><em><a href="">T恤</a></em><em><a href="">棉服</a></em><em><a href="">大码女装</a></em></dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="item">
+                        <h3><a href="" style="color: #CCCCCC">美妆 / 个护清洁 / 宠物</a></h3>
+                        <div class="item-list clearfix">
+                            <div class="subitem">
+                                <dl class="fore1">
+                                    <dt><a href="">面部护肤</a></dt>
+                                    <dd><em><a href="">礼盒</a></em><em><a href="">美白</a></em><em><a href="">防晒</a></em><em><a href="">面膜</a></em><em><a href="">洁面</a></em><em><a href="">爽肤水</a></em><em><a href="">精华</a></em><em><a href="">眼霜</a></em><em><a href="">乳液/面霜</a></em><em><a href="">卸妆</a></em><em><a href="">T区护理</a></em><em><a href="">润唇膏</a></em></dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="item">
+                        <h3><a href="" style="color: #CCCCCC">女鞋 / 箱包 / 钟表 / 珠宝</a></h3>
+                        <div class="item-list clearfix">
+                            <div class="subitem">
+                                <dl class="fore1">
+                                    <dt><a href="">时尚女鞋</a></dt>
+                                    <dd><em><a href="">新品推荐</a></em><em><a href="">女靴</a></em><em><a href="">马丁靴</a></em><em><a href="">雪地靴</a></em><em><a href="">踝靴</a></em><em><a href="">休闲鞋</a></em><em><a href="">单鞋</a></em><em><a href="">帆布鞋</a></em><em><a href="">妈妈鞋</a></em><em><a href="">布鞋/绣花鞋</a></em><em><a href="">雨鞋/雨靴</a></em><em><a href="">高跟鞋</a></em><em><a href="">凉鞋</a></em></dd>
+                                </dl>
+                            </div>
+                            <div class="cat-right"></div>
+                        </div>
+                    </div>
+
+                    <div class="item">
+                        <h3><a href="" style="color: #CCCCCC">男鞋 / 运动 / 户外</a></h3>
+                        <div class="item-list clearfix">
+                            <div class="subitem">
+                                <dl class="fore1">
+                                    <dt><a href="">流行男鞋</a></dt>
+                                    <dd><em><a href="">新品推荐</a></em><em><a href="">休闲鞋</a></em><em><a href="">男靴</a></em><em><a href="">商务</a></em><em><a href="">休闲鞋</a></em><em><a href="">正装鞋</a></em><em><a href="">帆布鞋</a></em><em><a href="">凉鞋</a></em><em><a href="">拖鞋</a></em><em><a href="">功能鞋</a></em><em><a href="">增高鞋</a></em><em><a href="">工装鞋</a></em><em><a href="">雨鞋</a></em><em><a href="">传统布鞋</a></em><em><a href="">鞋配件</a></em></dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="item">
+                        <h3><a href="" style="color: #CCCCCC">房产 / 汽车 / 汽车用品</a></h3>
+                        <div class="item-list clearfix">
+                            <div class="subitem">
+                                <dl class="fore1">
+                                    <dt><a href="">房产</a></dt>
+                                    <dd><em><a href="">最新开盘</a></em><em><a href="">普通住宅</a></em><em><a href="">别墅</a></em><em><a href="">商业办公</a></em><em><a href="">海外房产</a></em><em><a href="">文旅地产</a></em><em><a href="">长租公寓</a></em></dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="item">
+                        <h3><a href="" style="color: #CCCCCC">母婴 / 玩具乐器</a></h3>
+                        <div class="item-list clearfix">
+                            <div class="subitem">
+                                <dl class="fore1">
+                                    <!--<dt><a href="">电视</a></dt>-->
+                                    <!--<dd><em><a href="">超薄电视</a></em><em><a href="">全面屏电视</a></em><em><a href="">智能电视</a></em><em><a href="">OLED电视</a></em><em><a href="">智慧屏</a></em><em><a href="">4K超清电视</a></em><em><a href="">55英寸</a></em><em><a href="">65英寸</a></em><em><a href="">电视配件</a></em></dd>-->
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="item">
+                        <h3><a href="" style="color: #CCCCCC">食品 / 酒类 / 生鲜 / 特产</a></h3>
+                        <div class="item-list clearfix">
+                            <div class="subitem">
+                                <dl class="fore1">
+                                    <!--<dt><a href="">电视</a></dt>-->
+                                    <!--<dd><em><a href="">超薄电视</a></em><em><a href="">全面屏电视</a></em><em><a href="">智能电视</a></em><em><a href="">OLED电视</a></em><em><a href="">智慧屏</a></em><em><a href="">4K超清电视</a></em><em><a href="">55英寸</a></em><em><a href="">65英寸</a></em><em><a href="">电视配件</a></em></dd>-->
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--<div class="item">
+                        <h3><a href="">艺术 / 礼品鲜花 / 农资绿植</a></h3>
+                    </div>-->
+                    <!--<div class="item">
+                        <h3><a href="">医药保健 / 计生情趣</a></h3>
+                    </div>-->
+                    <!--<div class="item">
+                        <h3><a href="">图书 / 文娱 / 教育 / 电子书</a></h3>
+                    </div>-->
+
+                    <div class="item">
+                        <h3><a href="" style="color: #CCCCCC">机票 / 酒店 / 旅游 / 生活</a></h3>
+                        <div class="item-list clearfix">
+                            <div class="subitem">
+                                <dl class="fore1">
+                                    <!--<dt><a href="">电视</a></dt>-->
+                                    <!--<dd><em><a href="">超薄电视</a></em><em><a href="">全面屏电视</a></em><em><a href="">智能电视</a></em><em><a href="">OLED电视</a></em><em><a href="">智慧屏</a></em><em><a href="">4K超清电视</a></em><em><a href="">55英寸</a></em><em><a href="">65英寸</a></em><em><a href="">电视配件</a></em></dd>-->
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="item">
+                        <h3><a href="" style="color: #CCCCCC">理财 / 众筹 / 白条 / 保险</a></h3>
+                        <div class="item-list clearfix">
+                            <div class="subitem">
+                                <dl class="fore1">
+                                    <!--<dt><a href="">电视</a></dt>-->
+                                    <!--<dd><em><a href="">超薄电视</a></em><em><a href="">全面屏电视</a></em><em><a href="">智能电视</a></em><em><a href="">OLED电视</a></em><em><a href="">智慧屏</a></em><em><a href="">4K超清电视</a></em><em><a href="">55英寸</a></em><em><a href="">65英寸</a></em><em><a href="">电视配件</a></em></dd>-->
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="item">
+                        <h3><a href="" style="color: #CCCCCC">安装 / 维修 / 清洗 / 二手</a></h3>
+                        <div class="item-list clearfix">
+                            <div class="subitem">
+                                <dl class="fore1">
+                                    <!--<dt><a href="">电视</a></dt>-->
+                                    <!--<dd><em><a href="">超薄电视</a></em><em><a href="">全面屏电视</a></em><em><a href="">智能电视</a></em><em><a href="">OLED电视</a></em><em><a href="">智慧屏</a></em><em><a href="">4K超清电视</a></em><em><a href="">55英寸</a></em><em><a href="">65英寸</a></em><em><a href="">电视配件</a></em></dd>-->
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="item">
+                        <h3><a href="" style="color: #CCCCCC">工业品</a></h3>
+                        <div class="item-list clearfix">
+                            <div class="subitem">
+                                <dl class="fore1">
+                                    <!--<dt><a href="">电视</a></dt>-->
+                                    <!--<dd><em><a href="">超薄电视</a></em><em><a href="">全面屏电视</a></em><em><a href="">智能电视</a></em><em><a href="">OLED电视</a></em><em><a href="">智慧屏</a></em><em><a href="">4K超清电视</a></em><em><a href="">55英寸</a></em><em><a href="">65英寸</a></em><em><a href="">电视配件</a></em></dd>-->
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--首页轮播广告-->
+            <div class="yui3-u Center banerArea">
+                <!--banner轮播-->
+                <div id="myCarousel" data-ride="carousel" data-interval="4000" class="sui-carousel slide" >
+                    <ol class="carousel-indicators">
+                        <li data-target="#myCarousel" data-slide-to="{{$index}}"
+                            class="{{$index==0?'active':''}}" ng-repeat="item in contentList[1]">
+                        </li>
+                    </ol>
+                    <div class="carousel-inner" >
+                        <div class="{{$index==0?'active':''}} item" ng-repeat="item in contentList[1]" >
+                            <a href="{{item.url}}" >
+                                <img src="{{item.pic}}" title="{{item.title}}" style="width: 730px;height: 450px;"/>
+                            </a>
+                        </div>
+                    </div>
+                    <a href="#myCarousel" data-slide="prev" class="carousel-control left">‹</a>
+                    <a href="#myCarousel" data-slide="next" class="carousel-control right">›</a>
+                </div>
+            </div>
+
+            <div class="yui3-u Right" style="background-color: #FFFFFF">
+                <!--快报-->
+                <div class="news" style="color: #CCCCCC">
+                    <h4><em class="fl">Y快报</em><span class="fr tip">更多 ></span></h4>
+                    <div class="clearix"></div>
+                    <ul class="news-list unstyled">
+                        <li>
+                            <span class="bold">[最新]</span>xxxxxxxxxx
+                        </li>
+                        <li>
+                            <span class="bold">[推荐]</span>xxxxxxxxxx
+                        </li>
+                        <li>
+                            <span class="bold">[HOT]</span>xxxxxxxxxx
+                        </li>
+                        <li>
+                            <span class="bold">[热门]</span>xxxxxxxxxx
+                        </li>
+                        <li>
+                            <span class="bold">[最新]</span>xxxxxxxxxx
+                        </li>
+                        <li>
+                            <span class="bold">[推荐]</span>xxxxxxxxxx
+                        </li>
+                        <li>
+                            <span class="bold">[HOT]</span>xxxxxxxxxx
+                        </li>
+                        <li>
+                            <span class="bold">[热门]</span>xxxxxxxxxx
+                        </li>
+                    </ul>
+                </div>
+
+                <!--小程序-->
+                <ul class="yui3-g Lifeservice" style="color: #CCCCCC">
+                    <li class="yui3-u-1-4 life-item tab-item">
+                        <i class="list-item list-item-1"></i>
+                        <span class="service-intro">话费</span>
+                    </li>
+                    <li class="yui3-u-1-4 life-item tab-item">
+                        <i class="list-item list-item-2"></i>
+                        <span class="service-intro">机票</span>
+                    </li>
+                    <li class="yui3-u-1-4 life-item tab-item">
+                        <i class="list-item list-item-3"></i>
+                        <span class="service-intro">电影票</span>
+                    </li>
+                    <li class="yui3-u-1-4 life-item tab-item">
+                        <i class="list-item list-item-4"></i>
+                        <span class="service-intro">游戏</span>
+                    </li>
+                    <li class="yui3-u-1-4 life-item notab-item">
+                        <i class="list-item list-item-5"></i>
+                        <span class="service-intro">企业购</span>
+                    </li>
+                    <li class="yui3-u-1-4 life-item notab-item">
+                        <i class="list-item list-item-6"></i>
+                        <span class="service-intro">加油站</span>
+                    </li>
+                    <li class="yui3-u-1-4 life-item notab-item">
+                        <i class="list-item list-item-7"></i>
+                        <span class="service-intro">酒店</span>
+                    </li>
+                    <li class="yui3-u-1-4 life-item notab-item">
+                        <i class="list-item list-item-8"></i>
+                        <span class="service-intro">火车票</span>
+                    </li>
+                    <li class="yui3-u-1-4 life-item  notab-item">
+                        <i class="list-item list-item-9"></i>
+                        <span class="service-intro">众筹</span>
+                    </li>
+                    <li class="yui3-u-1-4 life-item notab-item">
+                        <i class="list-item list-item-10"></i>
+                        <span class="service-intro">理财</span>
+                    </li>
+                    <li class="yui3-u-1-4 life-item notab-item">
+                        <i class="list-item list-item-11"></i>
+                        <span class="service-intro">礼品卡</span>
+                    </li>
+                    <li class="yui3-u-1-4 life-item notab-item">
+                        <i class="list-item list-item-12"></i>
+                        <span class="service-intro">白条</span>
+                    </li>
+                </ul>
+
+                <div class="life-item-content">
+                    <div class="life-detail">
+                        <i class="close">关闭</i>
+                        <p>话费充值</p>
+                        <form action="" class="sui-form form-horizontal">
+                            号码：<input type="text" id="inputphoneNumber" placeholder="输入你的号码"/>
+                        </form>
+                        <button class="sui-btn btn-danger">快速充值</button>
+                    </div>
+                    <div class="life-detail">
+                        <i class="close">关闭</i> 机票
+                    </div>
+                    <div class="life-detail">
+                        <i class="close">关闭</i> 电影票
+                    </div>
+                    <div class="life-detail">
+                        <i class="close">关闭</i> 游戏
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<!--广告：发现好货-->
+<div id="floor-1" class="floor"><div class="py-container">
+    <ul class="yui3-g Recommend">
+        <li class="yui3-u-1-6  clock" style="background-image: url(img/clock.png);background-repeat:no-repeat;background-position:center center;">
+            <div style="background-color: #c38752;margin-top: -10px;">
+                <h3>发现好货</h3>
+            </div>
+        </li>
+        <li class="yui3-u-5-24">
+            <!--画容器-->
+            <div id="findGoodId" data-ride="carousel" data-interval="4000" class="sui-carousel slide"
+                 style="width: 100%;height: 100%;">
+                <!--设置轮播顺序,下面的点点-->
+                <ol class="carousel-indicators">
+                    <li data-target="#findGoodId" data-slide-to="{{$index}}"
+                        class="{{$index==0?'active':''}}" ng-repeat="item in findGoodList"></li>
+                </ol>
+                <!--轮播图片-->
+                <div class="carousel-inner" style="width: 100%;height: 100%;">
+                    <div class="{{$index==0?'active':''}} item" ng-repeat="item in findGoodList" style="width: 100%;height: 100%;">
+                        <div style="left: 0;top: 0;padding: 0;width: 100%;height: 100%;">
+                            <a href="{{itemNum.url}}" target="_blank" ng-repeat="itemNum in item" >
+                                <img src="{{itemNum.pic}}" alt="{{itemNum.title}}" title="{{itemNum.title}}" style="display: inline-block;width: 24.8%;height: 100%;float: left;padding:0 0.1%;" >
+                            </a>
+                                <!--<span>{{itemNum.title}}</span>-->
+                        </div>
+                    </div>
+                </div>
+                <!--左右点击-->
+                <a href="#findGoodId" data-slide="prev" class="carousel-control left">‹</a>
+                <a href="#findGoodId" data-slide="next" class="carousel-control right">›</a>
+            </div>
+        </li>
+    </ul>
+</div></div>
+
+<!--频道广场:待开发-->
+<div id="floor-2" class="floor"><div class="py-container">
+    <div class="title">
+        <h3 class="fl" style="width: 100%;margin:0 auto;text-align:center;color:#c6c6c6;">频道广场</h3>
+    </div>
+    <div class="clearfix  tab-content floor-content" style="margin-top: 15px">
+        <div id="tab1" class="tab-pane active">
+            <div class="yui3-g Floor-1">
+                <!---->
+                <div class="yui3-u floorBanner" style="width: 24%;margin-right: 1%;">
+                    <img src="img/floor-pindao-01.png" style="width:100%;height:100%;"/>
+                </div>
+                <!---->
+                <div class="yui3-u floorBanner" style="width: 24%;margin-right: 1%;">
+                    <img src="img/floor-pindao-02.png" style="width:100%;height:100%;"/>
+                </div>
+                <!---->
+                <div class="yui3-u row-250 split" style="width: 24.5%;margin-right: 1%;">
+                    <div style="margin-bottom:4%;height: 48%;">
+                        <img src="img/floor-pindao-03.png" style="width:100%;height:100%;"/>
+                    </div>
+                    <div style="height: 48%;">
+                        <img src="img/floor-pindao-04.png" style="width:100%;height:100%;"/>
+                    </div>
+                </div>
+                <!---->
+                <div class="yui3-u row-250 split" style="width: 24.5%;">
+                    <div style="margin-bottom:4%;height: 48%;">
+                        <img src="img/floor-pindao-05.png" style="width:100%;height:100%;"/>
+                    </div>
+                    <div style="height: 48%;">
+                        <img src="img/floor-pindao-06.png" style="width:100%;height:100%;"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div></div>
+
+<!--为你推荐：待开发-->
+<div id="floor-3" class="floor"><div class="py-container">
+    <div class="py-container">
+        <div class="title">
+            <h3 class="fl" style="width: 100%;margin:0 auto;text-align:center;color:#c6c6c6;">为你推荐</h3>
+            <b class="border"></b>
+            <!--<a href="javascript:;" class="fr tip changeBnt" id="xxlChg"><i></i>换一换</a>-->
+        </div>
+        <div class="clearfix  tab-content floor-content" style="margin-top: 15px">
+            <div id="tab2" class="tab-pane active">
+                <div class="yui3-g Floor-1">
+                    <div class="yui3-u floorBanner" style="width: 20%;" ng-repeat="item in contentList[3]">
+                        <a href="{{item.url}}" class="pic" target="_blank">
+                            <img src="{{item.pic}}" alt="{{item.title}}" style="width:90%;height:70%;"/>
+                        </a>
+                        <div class="like-text" style="width:90%;height:20%;">
+                            <p style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;margin-right: 15px" title="{{item.title}}">{{item.title}}</p>
+                            <h3>¥xxx.00</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div></div>
+
+
+<!--页面底部-->
+<div>
+    <iframe width="100%" id="iframeFoot" name="iframe" onload="SetIFrameHeightFoot()" frameborder="0" src="admin/foot.html"></iframe>
+</div>
+
+
+<!-- 楼层位置 -->
+<div id="floor-index" class="floor-index">
+    <ul>
+        <li>
+            <a class="num" href="javascript:;" style="display: none;">1F</a>
+            <a class="word" href="javascript;;" style="display: block;">发现好货</a>
+        </li>
+        <li>
+            <a class="num" href="javascript:;" style="display: none;">2F</a>
+            <a class="word" href="javascript;;" style="display: block;">频道广场</a>
+        </li>
+        <li>
+            <a class="num" href="javascript:;" style="display: none;">3F</a>
+            <a class="word" href="javascript;;" style="display: block;">为你推荐</a>
+        </li>
+    </ul>
+</div>
+
+
+<!--侧栏面板开始-->
+<div class="J-global-toolbar">
+    <div class="toolbar-wrap J-wrap">
+        <div class="toolbar">
+            <div class="toolbar-panels J-panel">
+
+                <!-- 购物车面板内容 -->
+                <div style="visibility: hidden;" class="J-content toolbar-panel tbar-panel-cart toolbar-animate-out">
+                    <h3 class="tbar-panel-header J-panel-header">
+                        <!--标题-->
+                        <a href="javascript:;" class="title"><i></i><em class="title">购物车</em></a>
+                        <!--关闭按钮-->
+                        <span class="close-panel J-close" onclick="cartPanelView.tbar_panel_close('cart');"></span>
+                    </h3>
+                    <div class="tbar-panel-main">
+                        <div id="J-cart-tips" class="tbar-tipbox" ng-if="!loginFlag">
+                            <div class="tip-inner">
+                                <span class="tip-text">还没有登录，登录后商品将被保存</span>
+                                <a href="#none" class="tip-btn J-login">登录</a>
+                            </div>
+                        </div>
+                        <div class="tbar-panel-content J-panel-content">
+                            <div id="J-cart-render">
+                                <!-- 购物车商品列表 -->
+                                <div id="cart-list" class="tbar-cart-list">
+                                    <div class="tbar-cart-item">
+                                        <!--满减提示-->
+                                        <!--<div class="jtc-item-promo">
+                                            <em class="promo-tag promo-mz"> <i class="arrow"></i> </em>
+                                            <div class="promo-text"> </div>
+                                        </div>-->
+                                        <!--列表-->
+                                        <div class="jtc-item-goods" ng-repeat="cart in cartList">
+                                            <div ng-repeat="item in cart.orderItemList">
+                                                <span class="p-img">
+                                                    <!--<a href="javascript:;" target="_blank">aaa<img src="{2}" alt="{1}" height="50" width="50"/></a>-->
+                                                    <a href="{{getUrl(item.goodsId)}}" target="_blank">
+                                                        <img src="{{item.picPath}}" height="50" width="50"/>
+                                                    </a>
+                                                </span>
+                                                <div class="p-name">
+                                                    <a href="{{getUrl(item.goodsId)}}" target="_blank">{{item.title}}</a>
+                                                </div>
+                                                <div class="p-price">
+                                                    <strong>¥{{item.price.toFixed(2)}}</strong>×{{item.num}}
+                                                </div>
+                                                <a href="javascript:;" ng-click="addGoodsToCartList(item.itemId,-item.num)" class="p-del J-del">删除</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="cart-footer" class="tbar-panel-footer J-panel-footer">
+                        <div class="tbar-checkout">
+                            <div class="jtc-number"><strong class="J-count" id="cart-number">{{totalValue.totalNum}}</strong>件商品</div>
+                            <div class="jtc-sum"> 共计：<strong class="J-total" id="cart-sum">¥{{totalValue.totalMoney}}</strong></div>
+                            <a class="jtc-btn J-btn" href="http://localhost:9107/ecommerce_cart_web/" target="_blank">去购物车结算</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 我的关注面板内容 -->
+                <div style="visibility: hidden;" data-name="follow" class="J-content toolbar-panel tbar-panel-follow">
+                    <h3 class="tbar-panel-header J-panel-header">
+                        <a href="javascript:;" target="_blank" class="title"> <i></i> <em class="title">我的关注</em> </a>
+                        <span class="close-panel J-close" onclick="cartPanelView.tbar_panel_close('follow');"></span>
+                    </h3>
+                    <div class="tbar-panel-main">
+                        <div class="tbar-panel-content J-panel-content">
+                            <div id="J-follow-render">
+                                <!-- 我的关注商品列表 -->
+                                <div id="follow-list" class="tbar-follow-list"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="follow-footer" class="tbar-panel-footer J-panel-footer">
+
+                    </div>
+                </div>
+
+                <!-- 我的足迹面板内容 -->
+                <div style="visibility: hidden;" class="J-content toolbar-panel tbar-panel-history toolbar-animate-in">
+                    <h3 class="tbar-panel-header J-panel-header">
+                        <a href="javascript:;" target="_blank" class="title"> <i></i> <em class="title">我的足迹</em> </a>
+                        <span class="close-panel J-close" onclick="cartPanelView.tbar_panel_close('history');"></span>
+                    </h3>
+                    <div class="tbar-panel-main">
+                        <div class="tbar-panel-content J-panel-content">
+                            <div id="J-history-render">
+                                <!-- 我的关注商品列表 -->
+                                <div id="history-list" class="tbar-history-list"></div>
+                            </div>
+
+                            <div class="jt-history-wrap">
+                                <ul>
+                                    <!--<li class="jth-item">
+                                    <a href="javascript:;" class="img-wrap"> <img src=".portal/img/like_03.png" height="100" width="100" /> </a>
+                                    <a class="add-cart-button" href="javascript:;" target="_blank">加入购物车</a>
+                                    <a href="javascript:;" target="_blank" class="price">￥498.00</a>
+                                </li>
+                                <li class="jth-item">
+                                    <a href="javascript:;" class="img-wrap"> <img src="portal/img/like_02.png" height="100" width="100" /></a>
+                                    <a class="add-cart-button" href="javascript:;" target="_blank">加入购物车</a>
+                                    <a href="javascript:;" target="_blank" class="price">￥498.00</a>
+                                </li>-->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tbar-panel-footer J-panel-footer">
+                        <a href="javascript:;" class="history-bottom-more" target="_blank">查看更多足迹商品 &gt;&gt;</a>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="toolbar-header"></div>
+
+            <!-- 侧栏按钮 -->
+            <div class="toolbar-tabs J-tab">
+                <div onclick="cartPanelView.tabItemClick('cart')" class="toolbar-tab tbar-tab-cart" data="购物车" tag="cart">
+                    <i class="tab-ico"></i>
+                    <em class="tab-text"></em>
+                    <span class="tab-sub J-count " id="tab-sub-cart-count">{{totalValue.totalNum}}</span>
+                </div>
+                <div onclick="cartPanelView.tabItemClick('follow')" class="toolbar-tab tbar-tab-follow" data="我的关注" tag="follow">
+                    <i class="tab-ico"></i>
+                    <em class="tab-text"></em>
+                    <span class="tab-sub J-count hide">0</span>
+                </div>
+                <div onclick="cartPanelView.tabItemClick('history')" class="toolbar-tab tbar-tab-history" data="我的足迹" tag="history">
+                    <i class="tab-ico"></i>
+                    <em class="tab-text"></em>
+                    <span class="tab-sub J-count hide">0</span>
+                </div>
+            </div>
+
+            <div class="toolbar-mini"></div>
+
+        </div>
+
+        <div id="J-toolbar-load-hook"></div>
+
+    </div>
+</div>
+<!--侧栏面板结束-->
+
+
+
+</div>
+
+<script type="text/javascript" src="js/plugins/jquery/jquery.min.js"></script>
+<script type="text/javascript">
+    $(function(){
+        $("#service").hover(function(){
+            $(".service").show();
+        },function(){
+            $(".service").hide();
+        });
+
+        $("#shopcar").hover(function(){
+            $("#shopcarlist").show();
+        },function(){
+            $("#shopcarlist").hide();
+        });
+
+    })
+</script>
+<script type="text/javascript" src="js/model/cartModel.js"></script>
+<script type="text/javascript" src="js/czFunction.js"></script>
+<script type="text/javascript" src="js/plugins/jquery.easing/jquery.easing.min.js"></script>
+<script type="text/javascript" src="js/plugins/sui/sui.min.js"></script>
+<script type="text/javascript" src="js/widget/cartPanelView.js"></script>
+<script type="text/javascript" src="js/widget/jquery.autocomplete.js"></script>
+<script type="text/javascript" src="js/widget/nav.js"></script>
+<!--分类、楼层样式-->
+<script type="text/javascript" src="js/pages/index.js"></script>
+
+</body>
+
+
+</html>
