@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE">
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
+    <title>我的购物车</title>
+
+    <link rel="stylesheet" type="text/css" href="css/webbase.css"/>
+    <link rel="stylesheet" type="text/css" href="css/pages-cart.css"/>
+
+    <script type="text/javascript" src="plugins/angularjs/angular.min.js"></script>
+
+    <script type="text/javascript" src="js/base.js"></script>
+    <script type="text/javascript" src="js/service/cartService.js"></script>
+    <script type="text/javascript" src="js/controller/cartController.js"></script>
+
+    <script type="text/javascript" src="js/service/userService.js"></script>
+    <!--<script type="text/javascript" src="js/controller/userController.js"></script>-->
+
+    <script type="text/javascript">
+        //设置高度
+        function SetIFrameHeightFoot() {
+            var iframeid = document.getElementById("iframeFoot"); //iframe id
+            if (document.getElementById) {
+                // iframeid.height = document.documentElement.clientHeight;
+                iframeid.height = 370;
+            }
+        }
+    </script>
+
+</head>
+
+<body ng-app="ecommerce" ng-controller="cartController"
+      ng-init="getName();findCartList()">
+<!--顶部-->
+<div class="top">
+    <div class="py-container">
+        <div class="shortcut">
+            <ul class="fr">
+                <li class="f-item" ng-if="!loginFlag">
+                    <a href="login.html" >你好，请登录</a>　
+                    <span><a href="http://localhost:9106/ecommerce_user_web/admin/register.html" target="_blank">免费注册</a></span>
+                </li>
+                <li class="f-item" ng-if="loginFlag">
+                    <span style="color: #000;">你好，{{username}}</span>
+                    <span class="space"></span>
+                    <span><a href="logout/cas">退出登录 </a></span>
+                </li>
+                <li class="f-item space"></li>
+
+                <li class="f-item">
+                    <a href="http://localhost:9106/ecommerce_user_web/" >我的订单</a>
+                </li>
+                <li class="f-item space"></li>
+
+                <li class="f-item">我的Y</li>
+                <li class="f-item space"></li>
+
+                <li class="f-item">Y会员</li>
+                <li class="f-item space"></li>
+
+                <li class="f-item">企业采购</li>
+                <li class="f-item space"></li>
+
+                <li class="f-item">客户服务</li>
+                <li class="f-item space"></li>
+
+                <li class="f-item">网站导航</li>
+                <li class="f-item space"></li>
+
+                <li class="f-item">手机Y</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<div class="cart py-container">
+    <!--logoArea-->
+    <div class="logoArea">
+        <div class="fl logo">
+            <span class="title">购物车</span>
+        </div>
+        <div class="fr search">
+            <form class="sui-form form-inline">
+                <div class="input-append">
+                    <input type="text" class="input-error input-xxlarge" ng-model="keywords" />
+                    <button class="sui-btn btn-xlarge btn-danger" type="button" ng-click="search()">搜索</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!--All goods-->
+    <div class="allgoods">
+        <h4 style="color: red">全部商品<span>  {{totalValue.totalNum}}  </span></h4>
+
+        <div class="cart-main">
+            <div class="yui3-g cart-th">
+                <div class="yui3-u-1-24">
+                    <input type="checkbox" name="" id="checkboxAll" value=""/> 全部
+                </div>
+                <div class="yui3-u-11-24"><span style="margin-left:20%;">商品</span></div>
+                <div class="yui3-u-1-8">单价</div>
+                <div class="yui3-u-1-8">数量</div>
+                <div class="yui3-u-1-8">小计</div>
+                <div class="yui3-u-1-8">操作</div>
+            </div>
+
+            <div class="cart-item-list" ng-repeat="cart in cartList">
+                <div class="cart-shop">
+                    <input type="checkbox" />
+                    <span class="shopname self">{{cart.sellerName}}</span>
+                </div>
+                <div class="cart-body">
+                    <div class="cart-list" ng-repeat="item in cart.orderItemList">
+                        <!--{{item}}-->
+                        <ul class="goods-list yui3-g">
+                            <!--checkbox-->
+                            <li class="yui3-u-1-24">
+                                <input type="checkbox" />
+                            </li>
+                            <!--商品：图片，标题-->
+                            <li class="yui3-u-11-24">
+                                <div class="good-item">
+                                    <div class="item-img">
+                                        <a href="{{getUrl(item.goodsId)}}" target="_blank">
+                                            <img src="{{item.picPath}}" style="width: 100%;height: 100%;"/>
+                                        </a>
+                                    </div>
+                                    <div class="item-msg">{{item.title}}</div>
+                                </div>
+                            </li>
+                            <!--单价-->
+                            <li class="yui3-u-1-8">
+                                <span class="price">¥ {{item.price.toFixed(2)}}</span>
+                            </li>
+                            <!--数量-->
+                            <li class="yui3-u-1-8">
+                                <a href="javascript:void(0)" class="increment mins"
+                                   ng-click="addGoodsToCartList(item.itemId,-1)">-</a>
+                                <input autocomplete="off" type="text" value="1" minnum="1" class="itxt"
+                                       ng-model="item.num"/>
+                                <a href="javascript:void(0)" class="increment plus"
+                                   ng-click="addGoodsToCartList(item.itemId,1)">+</a>
+                            </li>
+                            <!--小计-->
+                            <li class="yui3-u-1-8">
+                                <span class="sum">¥ {{item.totalFee.toFixed(2)}}</span>
+                            </li>
+                            <!--操作-->
+                            <li class="yui3-u-1-8">
+                                <a href="javascript:;" ng-click="addGoodsToCartList(item.itemId,-item.num)" style="color: #CCCCCC">删除</a><br/>
+                                <a href="javascript:;" ng-click="addGoodsToCartList(item.itemId,-item.num);" style="color: #CCCCCC">移到我的关注</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cart-tool">
+            <div class="select-all">
+                <input type="checkbox" name="" id="" value=""/>
+                <span>全选</span>
+            </div>
+            <div class="option">
+                <a href="javascript:;">删除选中商品</a>
+                <a href="javascript:;">移到关注</a>
+                <a href="javascript:;">清理购物车</a>
+            </div>
+            <div class="toolbar">
+                <div class="chosed">已选择<span>{{totalValue.totalNum}}</span>件商品</div>
+                <div class="sumprice">
+                    <span style="float: right;">
+                        <em>总价（不含运费） ：</em>
+                        <i class="summoney">¥{{totalValue.totalMoney.toFixed(2)}}</i>
+                        <!--<i class="fa fa-fw fa-lightbulb-o"></i>-->
+                    </span>
+                    <p style="margin: 0;float: right;"><span><em>已节省：</em><i>-¥20.00</i></span></p>
+                </div>
+                <div class="sumbtn">
+                    <a class="sum-btn" href="getOrderInfo.html" target="_blank">结算</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <div class="deled">
+            <span>已删除商品，您可以重新购买或加关注：</span>
+            <div class="cart-list del">
+                <ul class="goods-list yui3-g">
+                    <li class="yui3-u-1-2">
+                        <div class="good-item">
+                            <div class="item-msg">Apple Macbook Air 13.3英寸笔记本电脑 银色（Corei5）处理器/8GB内存</div>
+                        </div>
+                    </li>
+                    <li class="yui3-u-1-6"><span class="price">8848.00</span></li>
+                    <li class="yui3-u-1-6">
+                        <span class="number">1</span>
+                    </li>
+                    <li class="yui3-u-1-8">
+                        <a href="javascript:;">重新购买</a>
+                        <a href="javascript:;">移到我的关注</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="liked">
+            <ul class="sui-nav nav-tabs">
+                <li class="active">
+                    <a href="#index" data-toggle="tab">猜你喜欢</a>
+                </li>
+                <li>
+                    <a href="#profile" data-toggle="tab">随手购</a>
+                </li>
+            </ul>
+            <div class="clearfix"></div>
+            <div class="tab-content">
+                <!--猜你喜欢:根据购物车物品的名称，搜索商品，取前8个-->
+                <div id="index" class="tab-pane active">
+                    <div id="myCarousel" data-ride="carousel" data-interval="4000" class="sui-carousel slide">
+                        <div class="carousel-inner">
+                            <div class="active item">
+                                <ul>
+                                    <li>
+                                        <img src="img/like1.png"/>
+                                        <div class="intro">
+                                            <i>Apple苹果iPhone 6s (A1699)</i>
+                                        </div>
+                                        <div class="money">
+                                            <span>$29.00</span>
+                                        </div>
+                                        <div class="incar">
+                                            <a href="#" class="sui-btn btn-bordered btn-xlarge btn-default"><i
+                                                    class="car"></i><span class="cartxt">加入购物车</span></a>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <img src="img/like2.png"/>
+                                        <div class="intro">
+                                            <i>Apple苹果iPhone 6s (A1699)</i>
+                                        </div>
+                                        <div class="money">
+                                            <span>$29.00</span>
+                                        </div>
+                                        <div class="incar">
+                                            <a href="#" class="sui-btn btn-bordered btn-xlarge btn-default"><i
+                                                    class="car"></i><span class="cartxt">加入购物车</span></a>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <img src="img/like3.png"/>
+                                        <div class="intro">
+                                            <i>Apple苹果iPhone 6s (A1699)</i>
+                                        </div>
+                                        <div class="money">
+                                            <span>$29.00</span>
+                                        </div>
+                                        <div class="incar">
+                                            <a href="#" class="sui-btn btn-bordered btn-xlarge btn-default"><i
+                                                    class="car"></i><span class="cartxt">加入购物车</span></a>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <img src="img/like4.png"/>
+                                        <div class="intro">
+                                            <i>Apple苹果iPhone 6s (A1699)</i>
+                                        </div>
+                                        <div class="money">
+                                            <span>$29.00</span>
+                                        </div>
+                                        <div class="incar">
+                                            <a href="#" class="sui-btn btn-bordered btn-xlarge btn-default"><i
+                                                    class="car"></i><span class="cartxt">加入购物车</span></a>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <a href="#myCarousel" data-slide="prev" class="carousel-control left">‹</a>
+                        <a href="#myCarousel" data-slide="next" class="carousel-control right">›</a>
+                    </div>
+                </div>
+                <!--随手购-->
+                <div id="profile" class="tab-pane">
+                    <p>随手购</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--页面底部-->
+<div>
+    <iframe width="100%" id="iframeFoot" name="iframe" onload="SetIFrameHeightFoot()" frameborder="0" src="admin/foot.html"></iframe>
+</div>
+
+
+<script type="text/javascript" src="js/plugins/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="js/plugins/jquery.easing/jquery.easing.min.js"></script>
+<script type="text/javascript" src="js/plugins/sui/sui.min.js"></script>
+<script type="text/javascript" src="js/widget/nav.js"></script>
+</body>
+
+</html>
